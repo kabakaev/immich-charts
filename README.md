@@ -24,6 +24,13 @@ There are a few things that you are required to configure in your values.yaml be
   * You need to deploy a suitable postgres instance with the vectorchord extension yourself. It is recommended to use [cloudnative-pg](https://cloudnative-pg.io/) with the [tensorchord/cloudnative-vectorchord](https://github.com/tensorchord/cloudnative-vectorchord/pkgs/container/cloudnative-vectorchord) container image. An example cluster manifest can be found [here](./local/cloudnative-pg.yaml).
 * You need to set `image.tag` to the version you want to use, as this chart does not update with every Immich release.
 
+# Valkey Authentication
+
+By default, this chart enables authentication for Valkey. You have two modes for managing the authentication secret:
+
+*   **Auto-generated secret:** If you don't provide an `existingSecret`, the chart will automatically generate a secure password and store it in a secret named `<release-name>-valkey-auth`. When the password changes, the chart will trigger a rolling restart of all affected pods.
+*   **Existing secret:** If you prefer to manage the password yourself, you can create a secret with a `REDIS_PASSWORD` key and set `valkey.auth.existingSecret` to the name of that secret. In this mode, the chart will not generate a new secret, and you'll be responsible for managing the password and triggering restarts when it changes.
+
 # Configuration
 
 The immich chart is highly customizable. You can see a detailed documentation

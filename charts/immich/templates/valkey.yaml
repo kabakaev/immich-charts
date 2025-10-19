@@ -6,8 +6,20 @@ controllers:
   main:
     type: deployment
     strategy: Recreate
+    {{- if .Values.valkey.auth.enabled }}
+    podAnnotations:
+      checksum/valkey-auth: {{ include "valkey.secretChecksum" . }}
+    {{- end }}
     containers:
       main:
+        {{- if .Values.valkey.auth.enabled }}
+        envFrom:
+          - secretRef:
+              name: {{ if .Values.valkey.auth.existingSecret }}{{ .Values.valkey.auth.existingSecret }}{{ else }}{{ printf "%s-valkey-auth" .Release.Name }}{{ end }}
+        args:
+          - --requirepass
+          - $(REDIS_PASSWORD)
+        {{- end }}
         ports:
           - name: redis
             containerPort: 6379

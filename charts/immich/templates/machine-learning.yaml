@@ -2,12 +2,21 @@
 global:
   nameOverride: machine-learning
 
+{{- if .Values.valkey.auth.enabled }}
+defaultPodOptions:
+  annotations:
+    checksum/valkey-auth: {{ include "valkey.secretChecksum" . }}
+{{- end }}
+
 controllers:
   main:
     type: deployment
     strategy: RollingUpdate
     containers:
       main:
+        envFrom:
+          - secretRef:
+              name: {{ if .Values.valkey.auth.existingSecret }}{{ .Values.valkey.auth.existingSecret }}{{ else }}{{ printf "%s-valkey-auth" .Release.Name }}{{ end }}
         ports:
           - name: http
             containerPort: 3003

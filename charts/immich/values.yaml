@@ -55,6 +55,9 @@ valkey:
       type: emptyDir
       accessMode: ReadWriteOnce
       # storageClass: your-class
+  auth:
+    enabled: true
+    existingSecret: ""
 
 # Immich components
 
